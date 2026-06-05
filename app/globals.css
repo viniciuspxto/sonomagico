@@ -1,0 +1,139 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Primary Palette — Night Sky */
+  --color-deep: #1A0A3C;
+  --color-purple: #3D1A78;
+  --color-violet: #6B3FA0;
+  --color-lavender: #9B72CF;
+  --color-light-lavender: #C8A8E9;
+
+  /* Accent Colors */
+  --color-accent-gold: #F5B942;
+  --color-accent-orange: #FF8C42;
+  --color-accent-teal: #4ECDC4;
+  --color-star: #FFD700;
+
+  /* Semantic aliases */
+  --color-background: #1A0A3C;
+  --color-surface: #3D1A78;
+  --color-card: rgba(255, 255, 255, 0.06);
+  --color-card-hover: rgba(255, 255, 255, 0.10);
+  --color-card-border: rgba(255, 255, 255, 0.12);
+
+  --color-primary: #6B3FA0;
+  --color-primary-light: #9B72CF;
+  --color-primary-btn: #7B4FC0;
+
+  /* Text */
+  --color-text: #F0E8FF;
+  --color-text-secondary: rgba(240, 232, 255, 0.65);
+  --color-text-muted: rgba(240, 232, 255, 0.38);
+
+  /* Border */
+  --color-border: rgba(255, 255, 255, 0.12);
+
+  /* Tier */
+  --color-free: #4ECDC4;
+  --color-premium: #F5B942;
+
+  /* Status */
+  --color-success: #4ECDC4;
+  --color-error: #FF6B6B;
+  --color-warning: #F5B942;
+
+  /* Border Radius */
+  --radius-sharp: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-card: 16px;
+  --radius-lg: 20px;
+  --radius-pill: 50px;
+
+  /* Gradients */
+  --gradient-primary-cta: linear-gradient(135deg, #7B4FC0, #9B6DD4);
+  --gradient-premium: linear-gradient(135deg, #6B3FA0, #FF8C42);
+  --gradient-night-sky: linear-gradient(180deg, #1A0A3C 0%, #3D1A78 100%);
+  --gradient-aura: radial-gradient(ellipse at top, #3D1A78, #1A0A3C 70%);
+}
+
+body {
+  color: var(--color-text);
+  background-color: var(--color-background);
+  font-family: var(--font-body), sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading), cursive;
+}
+
+/* Stars background */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,0.6) 0%, transparent 50%),
+    radial-gradient(1.5px 1.5px at 25% 35%, rgba(255,255,255,0.4) 0%, transparent 50%),
+    radial-gradient(1px 1px at 40% 8%, rgba(255,255,255,0.5) 0%, transparent 50%),
+    radial-gradient(2px 2px at 55% 25%, rgba(255,220,100,0.5) 0%, transparent 50%),
+    radial-gradient(1px 1px at 70% 12%, rgba(255,255,255,0.4) 0%, transparent 50%),
+    radial-gradient(1.5px 1.5px at 85% 40%, rgba(255,255,255,0.6) 0%, transparent 50%),
+    radial-gradient(1px 1px at 15% 55%, rgba(255,255,255,0.3) 0%, transparent 50%),
+    radial-gradient(1px 1px at 90% 70%, rgba(255,255,255,0.4) 0%, transparent 50%),
+    radial-gradient(1.5px 1.5px at 5% 80%, rgba(255,255,255,0.3) 0%, transparent 50%),
+    radial-gradient(1px 1px at 60% 85%, rgba(255,255,255,0.5) 0%, transparent 50%),
+    radial-gradient(2px 2px at 35% 72%, rgba(255,220,100,0.4) 0%, transparent 50%),
+    radial-gradient(1px 1px at 78% 55%, rgba(255,255,255,0.4) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Animations */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(107, 63, 160, 0.3); }
+  50% { box-shadow: 0 0 40px rgba(107, 63, 160, 0.6); }
+}
+@keyframes breathe-scale {
+  0%, 100% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.12); opacity: 1; }
+}
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes streak-pulse {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 24px rgba(245, 185, 66, 0.25); }
+  50% { transform: scale(1.1); box-shadow: 0 0 32px rgba(245, 185, 66, 0.5); }
+}
+
+.animate-float { animation: float 3s ease-in-out infinite; }
+.animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+.animate-breathe { animation: breathe-scale 4s ease-in-out infinite; }
+.animate-fade-in { animation: fade-in 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
+.animate-streak-pulse { animation: streak-pulse 600ms ease forwards; }
+
+/* Shadows — purple-tinted */
+.shadow-card { box-shadow: 0 2px 8px rgba(26, 10, 60, 0.4); }
+.shadow-elevated { box-shadow: 0 4px 16px rgba(26, 10, 60, 0.5); }
+.shadow-glow { box-shadow: 0 8px 24px rgba(107, 63, 160, 0.45); }
+.shadow-gold { box-shadow: 0 8px 24px rgba(245, 185, 66, 0.4); }
+.shadow-magic { box-shadow: 0 0 32px rgba(107, 63, 160, 0.6); }
+
+/* Glass card */
+.glass-card {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(12px);
+}
+
+/* Button press state */
+.btn-press:active {
+  transform: scale(0.96);
+}
