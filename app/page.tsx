@@ -205,21 +205,21 @@ export default function Home() {
         />
 
         {/* Nav */}
-        <nav className="relative z-10 w-full max-w-5xl mx-auto flex items-center justify-center px-6 pt-12 lg:pt-16 mb-16 lg:mb-20">
+        <nav className="relative z-10 w-full max-w-5xl mx-auto flex items-center justify-center px-6 pt-6 lg:pt-16 mb-16 lg:mb-20">
           <Image
             src="/images/logo-sono-magico.png"
             alt="Sono Magico Animadabra"
-            width={200}
-            height={80}
+            width={320}
+            height={128}
             className="select-none"
             priority
           />
-          <Link
+          {/* <Link
             href="/login"
             className="absolute right-6 text-sm font-body font-bold text-light-lavender hover:text-text transition-colors duration-200 cursor-pointer"
           >
             Entrar
-          </Link>
+          </Link> */}
         </nav>
 
         {/* Hero content */}
@@ -260,7 +260,6 @@ export default function Home() {
               </Link>
             </div>
 
-            <p className="text-text-muted text-xs">Gratis para comecar · Sem cartao de credito</p>
           </div>
         </div>
       </section>
