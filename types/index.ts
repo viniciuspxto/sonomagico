@@ -74,3 +74,39 @@ export type EmotionType =
   | 'angry'
   | 'excited'
   | 'tired'
+
+// ── Ritual das 7 Noites ──────────────────────────────
+
+export type RitualNightStatus = 'in_progress' | 'completed' | 'skipped'
+export type RitualStoryMode = 'read' | 'listen'
+
+export interface RitualNight {
+  id: string
+  user_id: string
+  child_id: string
+  night_number: number
+  status: RitualNightStatus
+  alert_level: number | null
+  gratitude_items: string[]
+  dream_text: string | null
+  story_mode: RitualStoryMode
+  current_step: number
+  started_at: string
+  completed_at: string | null
+}
+
+export type RitualStepType =
+  | 'environment'
+  | 'alert-level'
+  | 'breathing'
+  | 'gratitude'
+  | 'story'
+  | 'dream'
+  | 'final'
+
+export interface TrailProgress {
+  nights: RitualNight[]
+  currentNight: number
+  trailComplete: boolean
+  activeSession: RitualNight | null
+}

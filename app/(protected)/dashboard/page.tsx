@@ -2,16 +2,15 @@ import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { LogoutButton } from '@/components/features/logout-button'
+import { TrailProgress } from '@/components/features/trail-progress'
 import { calculateStreak, completedToday } from '@/lib/streak'
+import type { RitualNightStatus } from '@/types'
 
 const DAYS = ['D','S','T','Q','Q','S','S']
 
 const ACTIVITIES = [
-  { href: '/respiracao',   emoji: '🌬️', label: 'Respiração',    badge: 'GRÁTIS',   free: true },
-  { href: '/historias',    emoji: '📖',  label: 'Histórias',     badge: 'GRÁTIS',   free: true },
-  { href: '/emocoes',      emoji: '🌡️', label: 'Emoções',       badge: 'GRÁTIS',   free: true },
-  { href: '/ruido-branco', emoji: '🔊',  label: 'Ruído Branco',  badge: 'GRÁTIS',   free: true },
-  { href: '/ritual',       emoji: '🌙',  label: 'Ritual 7N',     badge: 'PREMIUM',  free: false },
+  { href: '/respiracao',   emoji: '🌬️', label: 'Respiracao',    badge: 'GRATIS',   free: true },
+  { href: '/historias',    emoji: '📖',  label: 'Historias',     badge: 'GRATIS',   free: true },
 ]
 
 const EMOTION_EMOJIS: Record<string, string> = {
@@ -33,14 +32,14 @@ export default async function DashboardPage() {
 
   const child = children[0]
 
-  const [{ data: completions }, { data: emotionCheckins }] = await Promise.all([
+  // Fetch ritual nights + emotions in parallel
+  const [{ data: ritualNights }, { data: emotionCheckins }] = await Promise.all([
     supabase
-      .from('ritual_completions')
-      .select('completed_at')
+      .from('ritual_nights')
+      .select('night_number, status, completed_at')
       .eq('user_id', user!.id)
       .eq('child_id', child.id)
-      .order('completed_at', { ascending: false })
-      .limit(90),
+      .order('night_number', { ascending: true }),
     supabase
       .from('emotion_checkins')
       .select('emotion, checked_at')
@@ -49,17 +48,42 @@ export default async function DashboardPage() {
       .limit(7),
   ])
 
-  const dates = completions?.map((c) => c.completed_at) ?? []
-  const streak = calculateStreak(dates)
-  const doneToday = completedToday(dates)
+  const nights = (ritualNights ?? []) as Array<{
+    night_number: number
+    status: RitualNightStatus
+    completed_at: string | null
+  }>
+
+  // Streak from ritual_nights completed dates
+  const completedDates = nights
+    .filter(n => n.status === 'completed' && n.completed_at)
+    .map(n => n.completed_at!)
+
+  const streak = calculateStreak(completedDates)
+  const doneToday = completedToday(completedDates)
   const firstName = profile.full_name.split(' ')[0]
 
+  // Trail state
+  const completedOrSkipped = nights.filter(n => n.status === 'completed' || n.status === 'skipped')
+  const trailComplete = completedOrSkipped.length >= 7
+  const hasStarted = nights.length > 0
+
+  let currentNight = 1
+  if (hasStarted) {
+    const existing = new Set(nights.map(n => n.night_number))
+    for (let i = 1; i <= 7; i++) {
+      if (!existing.has(i)) { currentNight = i; break }
+    }
+    if (existing.size >= 7) currentNight = 7
+  }
+
+  // Last 7 days for week dots
   const today = new Date()
   const last7 = Array.from({ length: 7 }, (_, i) => {
     const d = new Date(today)
     d.setDate(today.getDate() - (6 - i))
     const key = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`
-    const done = dates.some(dt => {
+    const done = completedDates.some(dt => {
       const dd = new Date(dt)
       return `${dd.getFullYear()}-${dd.getMonth()}-${dd.getDate()}` === key
     })
@@ -67,6 +91,46 @@ export default async function DashboardPage() {
   })
 
   const recentEmotions = emotionCheckins?.slice(0, 7).reverse() ?? []
+
+  // CTA state
+  function getCTA() {
+    if (trailComplete) {
+      return {
+        label: 'Trilha concluida!',
+        sublabel: 'Parabens! Voce completou as 7 noites',
+        emoji: '🏆',
+        href: '#',
+        style: 'gold' as const,
+      }
+    }
+    if (doneToday) {
+      return {
+        label: `Noite ${currentNight - 1} concluida!`,
+        sublabel: 'Volte amanha para continuar',
+        emoji: '✅',
+        href: '#',
+        style: 'teal' as const,
+      }
+    }
+    if (!hasStarted) {
+      return {
+        label: 'Comecar Ritual das 7 Noites',
+        sublabel: `Uma trilha magica para ${child.name}`,
+        emoji: '🌙',
+        href: '/ritual',
+        style: 'gold' as const,
+      }
+    }
+    return {
+      label: `Iniciar Noite ${currentNight}`,
+      sublabel: `Personalizado para ${child.name}`,
+      emoji: '🌙',
+      href: '/ritual',
+      style: 'primary' as const,
+    }
+  }
+
+  const cta = getCTA()
 
   return (
     <div className="min-h-screen bg-background flex flex-col relative overflow-hidden">
@@ -95,7 +159,7 @@ export default async function DashboardPage() {
               <p className="font-body font-bold text-text text-sm mt-0.5">{child.name} · {child.age} anos</p>
             </div>
             <div className="text-right">
-              <p className="text-xs text-text-muted">Avaliação</p>
+              <p className="text-xs text-text-muted">Avaliacao</p>
               <p className="font-heading font-bold text-text">4.8 ⭐</p>
             </div>
           </div>
@@ -141,7 +205,7 @@ export default async function DashboardPage() {
               </div>
               {streak >= 3 && (
                 <p className="text-xs text-accent-gold font-bold mt-2">
-                  {streak >= 7 ? '🦉 Semana perfeita!' : streak >= 3 ? '🌟 Ótima sequência!' : ''}
+                  {streak >= 7 ? '🦉 Semana perfeita!' : '🌟 Otima sequencia!'}
                 </p>
               )}
             </div>
@@ -166,47 +230,76 @@ export default async function DashboardPage() {
           )}
         </div>
 
-        {/* CTA principal */}
-        <Link href={doneToday ? '#' : '/ritual'} className="block">
-          <div
-            className={`rounded-lg p-5 flex items-center justify-between transition-all ${
-              doneToday ? 'bg-accent-teal/10 border border-accent-teal/20' : 'shadow-glow'
-            }`}
-            style={doneToday ? {} : { background: 'linear-gradient(135deg, #3D1A78, #6B3FA0)' }}
-          >
-            <div className="space-y-1">
-              <p className={`text-xs uppercase tracking-widest font-extrabold ${doneToday ? 'text-accent-teal' : 'text-white/70'}`}>
-                {doneToday ? '✓ Concluído hoje' : 'Para esta noite'}
-              </p>
-              <p className={`font-heading font-bold text-xl ${doneToday ? 'text-accent-teal' : 'text-white'}`}>
-                {doneToday ? 'Ritual feito! 🎉' : 'Ritual de Sono'}
-              </p>
-              <p className={`text-sm ${doneToday ? 'text-accent-teal/70' : 'text-white/60'}`}>
-                {doneToday ? 'Volte amanhã 🔥' : `Personalizado para ${child.name}`}
-              </p>
-            </div>
-            <div className="text-5xl">{doneToday ? '✅' : '🌙'}</div>
-          </div>
-        </Link>
-
-        {/* Activity grid */}
+        {/* Atividades */}
         <div>
           <p className="font-body font-extrabold text-lavender text-xs uppercase tracking-widest mb-3">Atividades</p>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="space-y-3">
+            {/* CTA Ritual das 7 Noites */}
+            <Link href={cta.href} className="block">
+              <div
+                className={`rounded-lg p-5 transition-all ${
+                  cta.style === 'teal'
+                    ? 'bg-accent-teal/10 border border-accent-teal/20'
+                    : 'shadow-glow'
+                }`}
+                style={
+                  cta.style === 'gold'
+                    ? { background: 'linear-gradient(135deg, #F5B942, #FF8C42)' }
+                    : cta.style === 'primary'
+                    ? { background: 'linear-gradient(135deg, #3D1A78, #6B3FA0)' }
+                    : {}
+                }
+              >
+                <div className="flex items-center justify-between">
+                  <div className="space-y-1 flex-1">
+                    <p className={`text-xs uppercase tracking-widest font-extrabold ${
+                      cta.style === 'teal' ? 'text-accent-teal' :
+                      cta.style === 'gold' ? 'text-white/80' : 'text-white/70'
+                    }`}>
+                      {cta.style === 'teal' ? '✓ Concluido hoje' :
+                       cta.style === 'gold' && trailComplete ? '🏆 Trilha completa' :
+                       'Para esta noite'}
+                    </p>
+                    <p className={`font-heading font-bold text-xl ${
+                      cta.style === 'teal' ? 'text-accent-teal' : 'text-white'
+                    }`}>
+                      {cta.label}
+                    </p>
+                    <p className={`text-sm ${
+                      cta.style === 'teal' ? 'text-accent-teal/70' : 'text-white/60'
+                    }`}>
+                      {cta.sublabel}
+                    </p>
+                  </div>
+                  <div className="text-5xl flex-shrink-0 ml-3">{cta.emoji}</div>
+                </div>
+
+                {/* Trail progress indicator */}
+                {hasStarted && (
+                  <div className="mt-3 pt-3 border-t border-white/10">
+                    <TrailProgress
+                      nights={nights.map(n => ({ night_number: n.night_number, status: n.status }))}
+                      currentNight={currentNight}
+                      compact
+                    />
+                  </div>
+                )}
+              </div>
+            </Link>
+
+            {/* Respiracao e Historias */}
             {ACTIVITIES.map((a) => (
               <Link key={a.href} href={a.href} className="block">
-                <div className="glass-card rounded-card p-4 space-y-3 hover:border-lavender/30 transition-all active:scale-95">
-                  <div className="flex items-start justify-between">
-                    <div className="w-10 h-10 rounded-md flex items-center justify-center text-xl bg-violet/30">
-                      {a.emoji}
-                    </div>
-                    <span className={`text-xs font-extrabold px-2 py-0.5 rounded-pill ${
-                      a.free ? 'bg-accent-teal/[0.18] text-accent-teal' : 'bg-accent-gold/[0.15] text-accent-gold'
-                    }`}>
-                      {a.badge}
-                    </span>
+                <div className="glass-card rounded-card p-4 flex items-center gap-4 hover:border-lavender/30 transition-all active:scale-[0.97]">
+                  <div className="w-10 h-10 rounded-md flex items-center justify-center text-xl bg-violet/30 flex-shrink-0">
+                    {a.emoji}
                   </div>
-                  <p className="font-body font-bold text-text text-sm">{a.label}</p>
+                  <p className="font-body font-bold text-text text-sm flex-1">{a.label}</p>
+                  <span className={`text-xs font-extrabold px-2 py-0.5 rounded-pill ${
+                    a.free ? 'bg-accent-teal/[0.18] text-accent-teal' : 'bg-accent-gold/[0.15] text-accent-gold'
+                  }`}>
+                    {a.badge}
+                  </span>
                 </div>
               </Link>
             ))}
