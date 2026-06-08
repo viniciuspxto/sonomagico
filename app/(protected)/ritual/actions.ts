@@ -25,14 +25,28 @@ export async function getTrailProgress(childId: string): Promise<TrailProgress> 
   if (activeSession) {
     currentNight = activeSession.night_number
   } else {
-    const existing = new Set(allNights.map(n => n.night_number))
-    for (let i = 1; i <= 7; i++) {
-      if (!existing.has(i)) {
-        currentNight = i
-        break
+    // Check if last completed night was today (repeat scenario)
+    const today = new Date()
+    const todayStr = `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`
+    const completedToday = allNights.find(n => {
+      if (n.status !== 'completed' || !n.completed_at) return false
+      const d = new Date(n.completed_at)
+      return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}` === todayStr
+    })
+
+    if (completedToday) {
+      // Repeat: stay on the same night, don't advance
+      currentNight = completedToday.night_number
+    } else {
+      const existing = new Set(allNights.map(n => n.night_number))
+      for (let i = 1; i <= 7; i++) {
+        if (!existing.has(i)) {
+          currentNight = i
+          break
+        }
       }
+      if (existing.size >= 7) currentNight = 7
     }
-    if (existing.size >= 7) currentNight = 7
   }
 
   const doneOrSkipped = allNights.filter(
