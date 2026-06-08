@@ -20,33 +20,33 @@ interface Technique {
 
 const TECHNIQUES: Technique[] = [
   {
-    id: '4-4-4',
-    name: 'Respiração Quadrada',
+    id: 'lua-cheia',
+    name: 'Lua Cheia',
     emoji: '🌙',
     inhale: 4, hold: 4, exhale: 4, cycles: 4,
     description: 'Acalma antes de dormir',
     free: true,
   },
   {
-    id: '4-7-8',
-    name: 'Técnica 4-7-8',
+    id: 'soneca-estrela',
+    name: 'Soneca da Estrela',
     emoji: '⭐',
     inhale: 4, hold: 7, exhale: 8, cycles: 3,
     description: 'Relaxamento profundo',
     free: true,
   },
   {
-    id: 'belly',
-    name: 'Barriga de Balão',
-    emoji: '🎈',
+    id: 'pijama-quentinho',
+    name: 'Pijama Quentinho',
+    emoji: '🧸',
     inhale: 4, hold: 0, exhale: 4, cycles: 5,
     description: 'Perfeita para crianças',
-    free: true,
+    free: false,
   },
   {
-    id: 'oceano',
-    name: 'Emoção do Oceano',
-    emoji: '🌊',
+    id: 'dragao-sonolento',
+    name: 'Dragão Sonolento',
+    emoji: '🐉',
     inhale: 5, hold: 2, exhale: 6, cycles: 4,
     description: 'Fluxo suave como ondas',
     free: false,
@@ -99,6 +99,171 @@ function getTransitionDuration(phase: Phase, technique: Technique): string {
   if (phase === 'exhale') return `${technique.exhale}s`
   if (phase === 'hold')   return '0.4s'
   return '0.6s'
+}
+
+function BreathingIllustration({ id }: { id: string }) {
+  if (id === 'lua-cheia') {
+    return (
+      <svg viewBox="0 0 180 160" fill="none" className="w-full h-full">
+        <rect width="180" height="160" fill="#c8d8f0" rx="0" />
+        <rect width="180" height="160" fill="url(#luaBg)" rx="0" />
+        <defs>
+          <linearGradient id="luaBg" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#7a9ac8" />
+            <stop offset="100%" stopColor="#c8d8f0" />
+          </linearGradient>
+        </defs>
+        {/* Moon */}
+        <circle cx="90" cy="65" r="38" fill="#f5eaa8" />
+        <circle cx="90" cy="65" r="38" fill="#fdf5c0" opacity="0.6" />
+        <circle cx="82" cy="58" r="8" fill="#e8d890" opacity="0.4" />
+        <circle cx="100" cy="72" r="5" fill="#e8d890" opacity="0.3" />
+        <circle cx="88" cy="78" r="4" fill="#e8d890" opacity="0.25" />
+        {/* Glow */}
+        <circle cx="90" cy="65" r="50" fill="#fdf5c0" opacity="0.12" />
+        {/* Stars */}
+        <circle cx="30" cy="30" r="2.5" fill="#fff" opacity="0.9" />
+        <circle cx="155" cy="25" r="2" fill="#fff" opacity="0.8" />
+        <circle cx="22" cy="70" r="1.5" fill="#fff" opacity="0.6" />
+        <circle cx="160" cy="55" r="1.8" fill="#fff" opacity="0.7" />
+        <circle cx="50" cy="15" r="1.5" fill="#fff" opacity="0.5" />
+        <circle cx="140" cy="100" r="1.2" fill="#fff" opacity="0.4" />
+        {/* Clouds */}
+        <ellipse cx="40" cy="120" rx="35" ry="18" fill="#d8e4f4" opacity="0.7" />
+        <ellipse cx="60" cy="115" rx="28" ry="14" fill="#e0eaf8" opacity="0.6" />
+        <ellipse cx="140" cy="125" rx="30" ry="16" fill="#d8e4f4" opacity="0.7" />
+        <ellipse cx="120" cy="118" rx="24" ry="12" fill="#e0eaf8" opacity="0.5" />
+      </svg>
+    )
+  }
+
+  if (id === 'soneca-estrela') {
+    return (
+      <svg viewBox="0 0 180 160" fill="none" className="w-full h-full">
+        <rect width="180" height="160" fill="#2a1a4a" rx="0" />
+        <rect width="180" height="160" fill="url(#estrelaBg)" rx="0" />
+        <defs>
+          <linearGradient id="estrelaBg" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#1a0e3a" />
+            <stop offset="100%" stopColor="#3a2a5a" />
+          </linearGradient>
+        </defs>
+        {/* Big star */}
+        <polygon points="90,18 98,48 130,48 104,66 114,96 90,78 66,96 76,66 50,48 82,48" fill="#f5d860" opacity="0.9" />
+        <polygon points="90,28 95,48 115,48 100,60 106,80 90,68 74,80 80,60 65,48 85,48" fill="#fde888" opacity="0.8" />
+        {/* Sleeping face on star */}
+        <path d="M82 55 Q85 53 88 55" stroke="#c8a030" strokeWidth="1.5" strokeLinecap="round" fill="none" />
+        <path d="M92 55 Q95 53 98 55" stroke="#c8a030" strokeWidth="1.5" strokeLinecap="round" fill="none" />
+        <path d="M86 60 Q90 62 94 60" stroke="#c8a030" strokeWidth="1.2" strokeLinecap="round" fill="none" />
+        {/* Zzz */}
+        <text x="118" y="42" fill="#c8b8f0" fontSize="14" fontWeight="bold" opacity="0.8">z</text>
+        <text x="128" y="32" fill="#c8b8f0" fontSize="11" fontWeight="bold" opacity="0.6">z</text>
+        <text x="135" y="24" fill="#c8b8f0" fontSize="9" fontWeight="bold" opacity="0.4">z</text>
+        {/* Small stars */}
+        <circle cx="25" cy="35" r="2" fill="#fff" opacity="0.7" />
+        <circle cx="160" cy="28" r="2.5" fill="#fff" opacity="0.8" />
+        <circle cx="18" cy="90" r="1.5" fill="#c8b8f0" opacity="0.5" />
+        <circle cx="165" cy="80" r="1.8" fill="#c8b8f0" opacity="0.6" />
+        <circle cx="40" cy="120" r="1.2" fill="#fff" opacity="0.4" />
+        <circle cx="145" cy="115" r="1.5" fill="#fff" opacity="0.5" />
+        {/* Cloud bed */}
+        <ellipse cx="90" cy="130" rx="55" ry="20" fill="#d4c8f0" opacity="0.2" />
+        <ellipse cx="90" cy="135" rx="45" ry="16" fill="#d4c8f0" opacity="0.15" />
+      </svg>
+    )
+  }
+
+  if (id === 'pijama-quentinho') {
+    return (
+      <svg viewBox="0 0 180 160" fill="none" className="w-full h-full">
+        <rect width="180" height="160" fill="#f0e0d0" rx="0" />
+        <rect width="180" height="160" fill="url(#pijamaBg)" rx="0" />
+        <defs>
+          <linearGradient id="pijamaBg" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#f5e8d8" />
+            <stop offset="100%" stopColor="#e8d0c0" />
+          </linearGradient>
+        </defs>
+        {/* Bed/pillow */}
+        <rect x="30" y="95" width="120" height="50" rx="12" fill="#d8c0a0" opacity="0.5" />
+        <ellipse cx="90" cy="95" rx="50" ry="15" fill="#f0e0d0" />
+        {/* Blanket */}
+        <path d="M35 100 Q90 85 145 100 L145 135 Q90 145 35 135 Z" fill="#e8a0a0" opacity="0.4" />
+        <path d="M40 102 Q90 90 140 102 L140 130 Q90 140 40 130 Z" fill="#f0b0b0" opacity="0.35" />
+        {/* Teddy bear */}
+        <circle cx="90" cy="72" r="22" fill="#c8a070" />
+        <circle cx="74" cy="58" r="8" fill="#c8a070" />
+        <circle cx="106" cy="58" r="8" fill="#c8a070" />
+        <circle cx="74" cy="58" r="5" fill="#d8b888" />
+        <circle cx="106" cy="58" r="5" fill="#d8b888" />
+        <ellipse cx="90" cy="78" rx="12" ry="8" fill="#d8b888" />
+        {/* Face */}
+        <path d="M82 68 Q85 66 88 68" stroke="#8a6030" strokeWidth="1.5" strokeLinecap="round" fill="none" />
+        <path d="M92 68 Q95 66 98 68" stroke="#8a6030" strokeWidth="1.5" strokeLinecap="round" fill="none" />
+        <ellipse cx="90" cy="76" rx="3" ry="2" fill="#8a6030" />
+        <path d="M85 80 Q90 83 95 80" stroke="#8a6030" strokeWidth="1.2" strokeLinecap="round" fill="none" />
+        {/* Nightcap */}
+        <path d="M72 60 Q90 30 108 60" fill="#e8a0a0" />
+        <circle cx="95" cy="38" r="4" fill="#fff" opacity="0.8" />
+        {/* Hearts */}
+        <text x="35" y="45" fill="#e8a0a0" fontSize="12" opacity="0.5">♥</text>
+        <text x="140" y="50" fill="#e8a0a0" fontSize="10" opacity="0.4">♥</text>
+        <text x="25" y="80" fill="#e8a0a0" fontSize="8" opacity="0.3">♥</text>
+      </svg>
+    )
+  }
+
+  if (id === 'dragao-sonolento') {
+    return (
+      <svg viewBox="0 0 180 160" fill="none" className="w-full h-full">
+        <rect width="180" height="160" fill="#1a2a1a" rx="0" />
+        <rect width="180" height="160" fill="url(#dragaoBg)" rx="0" />
+        <defs>
+          <linearGradient id="dragaoBg" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#1a3a2a" />
+            <stop offset="100%" stopColor="#2a4a3a" />
+          </linearGradient>
+        </defs>
+        {/* Dragon body curled up */}
+        <ellipse cx="95" cy="105" rx="42" ry="28" fill="#5ab868" opacity="0.9" />
+        <ellipse cx="95" cy="105" rx="38" ry="24" fill="#6ac878" opacity="0.7" />
+        {/* Belly */}
+        <ellipse cx="95" cy="110" rx="25" ry="16" fill="#a8e8a0" opacity="0.4" />
+        {/* Head */}
+        <ellipse cx="58" cy="82" rx="22" ry="18" fill="#5ab868" />
+        <ellipse cx="55" cy="88" rx="14" ry="10" fill="#a8e8a0" opacity="0.4" />
+        {/* Snout */}
+        <ellipse cx="42" cy="86" rx="10" ry="7" fill="#4aa858" />
+        <circle cx="38" cy="83" r="2" fill="#3a8a48" />
+        <circle cx="42" cy="83" r="2" fill="#3a8a48" />
+        {/* Eyes closed */}
+        <path d="M52 76 Q56 74 60 76" stroke="#2a5a2a" strokeWidth="2" strokeLinecap="round" fill="none" />
+        <path d="M62 78 Q66 76 70 78" stroke="#2a5a2a" strokeWidth="2" strokeLinecap="round" fill="none" />
+        {/* Small horns */}
+        <polygon points="55,66 58,56 62,66" fill="#4aa858" opacity="0.8" />
+        <polygon points="65,68 68,58 72,68" fill="#4aa858" opacity="0.8" />
+        {/* Tail curled */}
+        <path d="M137 100 Q150 90 148 110 Q146 125 135 120" stroke="#5ab868" strokeWidth="8" strokeLinecap="round" fill="none" />
+        <circle cx="135" cy="120" r="5" fill="#5ab868" />
+        {/* Wings folded */}
+        <path d="M85 85 Q100 60 115 75 Q108 80 95 85 Z" fill="#4aa858" opacity="0.5" />
+        {/* Smoke puffs from nose */}
+        <circle cx="30" cy="78" r="5" fill="#a8e8a0" opacity="0.15" />
+        <circle cx="22" cy="72" r="4" fill="#a8e8a0" opacity="0.1" />
+        <circle cx="16" cy="68" r="3" fill="#a8e8a0" opacity="0.08" />
+        {/* Zzz */}
+        <text x="72" y="55" fill="#a8e8a0" fontSize="14" fontWeight="bold" opacity="0.7">z</text>
+        <text x="82" y="45" fill="#a8e8a0" fontSize="11" fontWeight="bold" opacity="0.5">z</text>
+        <text x="88" y="37" fill="#a8e8a0" fontSize="9" fontWeight="bold" opacity="0.3">z</text>
+        {/* Stars */}
+        <circle cx="145" cy="25" r="2" fill="#f5e8a0" opacity="0.7" />
+        <circle cx="25" cy="30" r="1.5" fill="#f5e8a0" opacity="0.5" />
+        <circle cx="160" cy="50" r="1.8" fill="#fff" opacity="0.4" />
+      </svg>
+    )
+  }
+
+  return null
 }
 
 export function BreathingSession() {
@@ -185,7 +350,7 @@ export function BreathingSession() {
           style={{ background: 'radial-gradient(circle, rgba(107,63,160,0.3), transparent 70%)' }}
         />
 
-        <header className="px-5 pt-12 pb-4 flex items-center gap-4 relative z-10">
+        <header className="px-5 pt-12 pb-6 flex items-center gap-4 relative z-10">
           <button
             onClick={() => router.push('/dashboard')}
             className="w-9 h-9 rounded-full glass-card flex items-center justify-center text-text-secondary shadow-card"
@@ -193,33 +358,26 @@ export function BreathingSession() {
             ←
           </button>
           <div>
-            <h1 className="font-heading text-xl font-bold text-text">Respirações Guiadas</h1>
-            <p className="text-text-muted text-xs">Escolha uma técnica</p>
+            <h1 className="font-heading text-xl font-bold text-text">Selecione a Respiração</h1>
           </div>
         </header>
 
         <main className="flex-1 px-5 pb-10 max-w-md mx-auto w-full relative z-10">
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-4">
             {TECHNIQUES.map(t => (
               <button
                 key={t.id}
                 onClick={() => startSession(t)}
-                className="glass-card rounded-card p-4 text-left space-y-3 hover:border-lavender/30 transition-all active:scale-95"
+                className="bg-white/[0.06] rounded-xl overflow-hidden text-center hover:bg-white/[0.1] transition-all active:scale-[0.96] border border-white/[0.08]"
               >
-                <div className="flex items-start justify-between">
-                  <div className="w-12 h-12 rounded-md flex items-center justify-center text-2xl bg-violet/30">
-                    {t.emoji}
-                  </div>
-                  <span />
+                {/* Illustration area */}
+                <div className="relative w-full overflow-hidden" style={{ aspectRatio: '1/0.9' }}>
+                  <BreathingIllustration id={t.id} />
                 </div>
-                <div>
+                {/* Info */}
+                <div className="px-3 pt-3 pb-2">
                   <p className="font-body font-bold text-text text-sm">{t.name}</p>
-                  <p className="text-text-muted text-xs mt-0.5">{t.description}</p>
-                </div>
-                <div className="flex items-center gap-2 text-xs text-text-muted">
-                  <span>{t.cycles} ciclos</span>
-                  <span>·</span>
-                  <span>~{Math.ceil(t.cycles * (t.inhale + t.hold + t.exhale) / 60)} min</span>
+                  <p className="text-text-muted text-xs mt-0.5">(animado)</p>
                 </div>
               </button>
             ))}

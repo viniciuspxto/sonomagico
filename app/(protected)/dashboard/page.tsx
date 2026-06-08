@@ -105,7 +105,7 @@ export default async function DashboardPage() {
         sublabel: 'Volte amanha para continuar',
         emoji: '🌙',
         href: '#',
-        style: 'teal' as const,
+        style: 'done' as const,
       }
     }
     if (!hasStarted) {
@@ -231,49 +231,25 @@ export default async function DashboardPage() {
           <p className="font-body font-extrabold text-lavender text-xs uppercase tracking-widest mb-3">Atividades</p>
           <div className="space-y-3">
             {/* CTA Ritual das 7 Noites */}
-            <Link href={cta.href} className="block">
-              <div
-                className={`rounded-lg p-5 transition-all ${
-                  cta.style === 'teal'
-                    ? 'bg-accent-teal/10 border border-accent-teal/20'
-                    : 'shadow-glow'
-                }`}
-                style={
-                  cta.style === 'gold'
-                    ? { background: 'linear-gradient(135deg, #F5B942, #FF8C42)' }
-                    : cta.style === 'primary'
-                    ? { background: 'linear-gradient(135deg, #3D1A78, #6B3FA0)' }
-                    : {}
-                }
-              >
+            {cta.style === 'done' ? (
+              <div className="glass-card rounded-lg p-5 shadow-card">
                 <div className="flex items-center justify-between">
                   <div className="space-y-1 flex-1">
-                    <p className={`text-xs uppercase tracking-widest font-extrabold ${
-                      cta.style === 'teal' ? 'text-accent-teal' :
-                      cta.style === 'gold' ? 'text-white/80' : 'text-white/70'
-                    }`}>
-                      {cta.style === 'teal' ? '✓ Concluido hoje' :
-                       cta.style === 'gold' && trailComplete ? '🏆 Trilha completa' :
-                       'Para esta noite'}
+                    <p className="text-xs uppercase tracking-widest font-extrabold text-accent-teal">
+                      ✓ Concluido hoje
                     </p>
-                    <p className={`font-heading font-bold text-xl ${
-                      cta.style === 'teal' ? 'text-accent-teal' : 'text-white'
-                    }`}>
+                    <p className="font-heading font-bold text-xl text-text">
                       {cta.label}
                     </p>
-                    <p className={`text-sm ${
-                      cta.style === 'teal' ? 'text-accent-teal/70' : 'text-white/60'
-                    }`}>
+                    <p className="text-sm text-text-secondary">
                       {cta.sublabel}
                     </p>
                   </div>
                   <div className="flex-shrink-0 ml-3 relative" style={{ width: 52, height: 52 }}>
                     <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-                      {/* Moon */}
                       <circle cx="26" cy="26" r="16" fill="#F5E8A8" opacity="0.9" />
-                      <circle cx="32" cy="20" r="16" fill={cta.style === 'teal' ? '#0d2a26' : cta.style === 'gold' ? '#F5B942' : '#3D1A78'} />
+                      <circle cx="32" cy="20" r="16" fill="rgba(255,255,255,0.06)" />
                       <circle cx="26" cy="26" r="16" fill="#F5E8A8" opacity="0.85" />
-                      {/* Stars */}
                       <circle cx="8" cy="10" r="1.8" fill="#F5E8A8" opacity="0.9" />
                       <circle cx="44" cy="8" r="1.2" fill="#F5E8A8" opacity="0.7" />
                       <circle cx="46" cy="38" r="1.5" fill="#F5E8A8" opacity="0.8" />
@@ -284,19 +260,70 @@ export default async function DashboardPage() {
                     </svg>
                   </div>
                 </div>
-
-                {/* Trail progress indicator */}
                 {hasStarted && (
-                  <div className="mt-3 pt-3 border-t border-white/10">
+                  <div className="mt-3 pt-3 border-t border-border flex items-center justify-between">
                     <TrailProgress
                       nights={nights.map(n => ({ night_number: n.night_number, status: n.status }))}
                       currentNight={currentNight}
                       compact
                     />
+                    <Link href="/ritual" className="text-xs font-bold text-lavender hover:text-text transition-colors whitespace-nowrap ml-3">
+                      Repetir ritual
+                    </Link>
                   </div>
                 )}
               </div>
-            </Link>
+            ) : (
+              <Link href={cta.href} className="block">
+                <div
+                  className="rounded-lg p-5 transition-all shadow-glow"
+                  style={
+                    cta.style === 'gold'
+                      ? { background: 'linear-gradient(135deg, #F5B942, #FF8C42)' }
+                      : { background: 'linear-gradient(135deg, #3D1A78, #6B3FA0)' }
+                  }
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-1 flex-1">
+                      <p className={`text-xs uppercase tracking-widest font-extrabold ${
+                        cta.style === 'gold' ? 'text-white/80' : 'text-white/70'
+                      }`}>
+                        {cta.style === 'gold' && trailComplete ? '🏆 Trilha completa' : 'Para esta noite'}
+                      </p>
+                      <p className="font-heading font-bold text-xl text-white">
+                        {cta.label}
+                      </p>
+                      <p className="text-sm text-white/60">
+                        {cta.sublabel}
+                      </p>
+                    </div>
+                    <div className="flex-shrink-0 ml-3 relative" style={{ width: 52, height: 52 }}>
+                      <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+                        <circle cx="26" cy="26" r="16" fill="#F5E8A8" opacity="0.9" />
+                        <circle cx="32" cy="20" r="16" fill={cta.style === 'gold' ? '#F5B942' : '#3D1A78'} />
+                        <circle cx="26" cy="26" r="16" fill="#F5E8A8" opacity="0.85" />
+                        <circle cx="8" cy="10" r="1.8" fill="#F5E8A8" opacity="0.9" />
+                        <circle cx="44" cy="8" r="1.2" fill="#F5E8A8" opacity="0.7" />
+                        <circle cx="46" cy="38" r="1.5" fill="#F5E8A8" opacity="0.8" />
+                        <circle cx="6" cy="40" r="1" fill="#F5E8A8" opacity="0.6" />
+                        <circle cx="14" cy="4" r="1" fill="#fff" opacity="0.5" />
+                        <circle cx="40" cy="48" r="1.3" fill="#fff" opacity="0.6" />
+                        <circle cx="48" cy="22" r="0.8" fill="#fff" opacity="0.5" />
+                      </svg>
+                    </div>
+                  </div>
+                  {hasStarted && (
+                    <div className="mt-3 pt-3 border-t border-white/10">
+                      <TrailProgress
+                        nights={nights.map(n => ({ night_number: n.night_number, status: n.status }))}
+                        currentNight={currentNight}
+                        compact
+                      />
+                    </div>
+                  )}
+                </div>
+              </Link>
+            )}
 
             {/* Respiracao e Historias — side by side */}
             <div className="grid grid-cols-2 gap-3">
@@ -336,7 +363,7 @@ export default async function DashboardPage() {
                   <div className="absolute bottom-0 inset-x-0 p-3 text-center" style={{
                     background: 'linear-gradient(to top, rgba(26,10,60,0.95), rgba(26,10,60,0.6), transparent)',
                   }}>
-                    <p className="font-body font-extrabold text-text text-sm">Respiracao</p>
+                    <p className="font-body font-extrabold text-text text-sm">Respiracoes que acalmam</p>
                   </div>
                 </div>
               </Link>
@@ -346,8 +373,8 @@ export default async function DashboardPage() {
                 <div className="relative rounded-card overflow-hidden hover:scale-[1.02] transition-all active:scale-[0.97]" style={{ aspectRatio: '1/1.15' }}>
                   {/* Background image — fills entire card */}
                   <Image
-                    src="/images/magicaco-reading.png"
-                    alt="Historias"
+                    src="/images/magicaco-reading-bed.png"
+                    alt="Historias para adormecer"
                     fill
                     className="object-cover object-top"
                   />
@@ -355,7 +382,7 @@ export default async function DashboardPage() {
                   <div className="absolute bottom-0 inset-x-0 p-3 text-center" style={{
                     background: 'linear-gradient(to top, rgba(13,27,42,0.95), rgba(13,27,42,0.6), transparent)',
                   }}>
-                    <p className="font-body font-extrabold text-text text-sm">Historias</p>
+                    <p className="font-body font-extrabold text-text text-sm">Historias para adormecer</p>
                   </div>
                 </div>
               </Link>
