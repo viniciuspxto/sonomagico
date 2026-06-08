@@ -2,234 +2,148 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { STORIES } from '../ritual/data/stories'
 
-const CATEGORIES = ['Todas', 'Sono', 'Medos', 'Coragem', 'Amizade']
-
-const STORIES = [
-  {
-    id: 'floresta-magica',
-    title: 'A Floresta dos Sonhos',
-    emoji: '🌲',
-    bg: ['#2D6A4F', '#52B788'],
-    desc: 'Uma aventura pela floresta encantada onde cada árvore guarda um sonho diferente para levar você ao sono...',
-    duration: '5 min',
-    free: true,
-    category: 'Sono',
-  },
-  {
-    id: 'dragao-amigo',
-    title: 'O Dragão que Tinha Medo',
-    emoji: '🐉',
-    bg: ['#C8553D', '#F28482'],
-    desc: 'Um pequeno dragão descobre que até os mais fortes sentem medo, e que respirar fundo é o maior poder...',
-    duration: '7 min',
-    free: true,
-    category: 'Medos',
-  },
-  {
-    id: 'viagem-nuvens',
-    title: 'Viagem nas Nuvens',
-    emoji: '☁️',
-    bg: ['#4A90D9', '#74B9FF'],
-    desc: 'Flutue pelas nuvens com seu animal favorito até o Reino dos Sonhos mágicos...',
-    duration: '6 min',
-    free: true,
-    category: 'Sono',
-  },
-  {
-    id: 'leao-corajoso',
-    title: 'O Leão Corajoso',
-    emoji: '🦁',
-    bg: ['#D4A017', '#F9CA24'],
-    desc: 'Um pequeno leão aprende que a coragem vem de dentro do coração. Uma história...',
-    duration: '8 min',
-    free: false,
-    category: 'Coragem',
-  },
-  {
-    id: 'jardim-lua',
-    title: 'O Jardim da Lua',
-    emoji: '🌙',
-    bg: ['#6C3483', '#A855F7'],
-    desc: 'Flores que brilham na noite e fadas que dançam à luz da lua cheia e estrelada...',
-    duration: '6 min',
-    free: false,
-    category: 'Sono',
-  },
-  {
-    id: 'trem-sonhos',
-    title: 'O Trem dos Sonhos',
-    emoji: '🚂',
-    bg: ['#C0392B', '#E74C3C'],
-    desc: 'Embarque numa viagem mágica pelo país dos sonhos mais felizes e coloridos...',
-    duration: '9 min',
-    free: false,
-    category: 'Coragem',
-  },
-  {
-    id: 'coelho-amigos',
-    title: 'O Coelho e os Amigos',
-    emoji: '🐰',
-    bg: ['#27AE60', '#2ECC71'],
-    desc: 'Um coelho tímido aprende sobre amizade, partilha e o valor do pertencimento...',
-    duration: '5 min',
-    free: false,
-    category: 'Amizade',
-  },
-]
+const STORY_META: Record<number, { emoji: string; gradient: [string, string] }> = {
+  1: { emoji: '🌊', gradient: ['#0d1b2a', '#1a2a4a'] },
+  2: { emoji: '☁️', gradient: ['#1a0e2e', '#2d1a4a'] },
+  3: { emoji: '💎', gradient: ['#0a1a18', '#0d2a26'] },
+  4: { emoji: '🌸', gradient: ['#0e1a0a', '#1a2e0e'] },
+  5: { emoji: '📚', gradient: ['#1a1208', '#2a1e0a'] },
+  6: { emoji: '🐚', gradient: ['#070f1a', '#0d1e30'] },
+  7: { emoji: '🏔️', gradient: ['#120a00', '#2a1800'] },
+}
 
 export default function HistoriasPage() {
-  const [category, setCategory] = useState('Todas')
-  const [playing, setPlaying] = useState<string | null>(null)
+  const [selectedStory, setSelectedStory] = useState<number | null>(null)
 
-  const filtered = category === 'Todas' ? STORIES : STORIES.filter(s => s.category === category)
+  const story = selectedStory !== null ? STORIES.find(s => s.nightNumber === selectedStory) : null
 
+  // ── Reading view ──
+  if (story) {
+    const meta = STORY_META[story.nightNumber]
+    return (
+      <div className="min-h-screen flex flex-col" style={{
+        background: `radial-gradient(ellipse at 50% 30%, ${meta.gradient[1]}, ${meta.gradient[0]} 70%)`,
+      }}>
+        {/* Header */}
+        <header className="px-5 pt-8 pb-4 flex items-center justify-between relative z-10">
+          <button
+            onClick={() => setSelectedStory(null)}
+            className="text-text-muted hover:text-text transition-colors text-sm font-bold"
+          >
+            ← Voltar
+          </button>
+          <span className="text-xs text-accent-gold font-bold">
+            Historia {story.nightNumber} de 7
+          </span>
+        </header>
+
+        {/* Story content */}
+        <main className="flex-1 px-5 pb-12 max-w-lg mx-auto w-full relative z-10">
+          {/* Title */}
+          <div className="text-center mb-8">
+            <div className="text-5xl mb-4">{meta.emoji}</div>
+            <h1 className="font-heading text-2xl font-bold text-text mb-2">{story.title}</h1>
+            <p className="text-text-muted text-sm">{story.destination}</p>
+          </div>
+
+          {/* Story text */}
+          <article className="space-y-5">
+            {story.content.split('\n\n').map((paragraph, idx) => (
+              <p
+                key={idx}
+                className="text-text-secondary leading-relaxed"
+                style={{ fontSize: 18, lineHeight: 1.85 }}
+              >
+                {paragraph}
+              </p>
+            ))}
+          </article>
+
+          {/* Ending */}
+          {story.ending && (
+            <div className="mt-10 pt-6 border-t border-border/30 text-center space-y-1">
+              {story.ending.split('\n').map((line, idx) => (
+                <p key={idx} className="text-lavender italic" style={{ fontSize: 16, lineHeight: 1.7 }}>
+                  {line}
+                </p>
+              ))}
+              <p className="mt-4 text-text-muted text-sm tracking-widest">Boa noite</p>
+            </div>
+          )}
+        </main>
+      </div>
+    )
+  }
+
+  // ── Library view ──
   return (
     <div className="min-h-screen bg-background flex flex-col">
 
       {/* Header */}
       <header className="px-5 pt-12 pb-3 flex items-center justify-between relative z-10">
-        <h1 className="font-heading text-2xl font-bold text-text">Biblioteca</h1>
-        <button className="w-9 h-9 rounded-full glass-card flex items-center justify-center text-text-secondary shadow-card">
-          🔍
-        </button>
+        <div>
+          <h1 className="font-heading text-2xl font-bold text-text">Biblioteca</h1>
+          <p className="text-text-muted text-xs mt-0.5">Historias do Macaco Magicaco</p>
+        </div>
+        <Link
+          href="/dashboard"
+          className="text-text-muted hover:text-text transition-colors text-sm"
+        >
+          ← Inicio
+        </Link>
       </header>
 
-      {/* Category chips */}
-      <div className="px-5 mb-4 relative z-10">
-        <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
-          {CATEGORIES.map(cat => (
-            <button
-              key={cat}
-              onClick={() => setCategory(cat)}
-              className={[
-                'flex-shrink-0 px-4 py-2 rounded-pill text-sm font-bold transition-all border',
-                category === cat
-                  ? 'bg-lavender text-deep border-lavender'
-                  : 'glass-card text-text-secondary border-border',
-              ].join(' ')}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Section title */}
-      <div className="px-5 mb-3 relative z-10">
-        <p className="font-heading font-bold text-text text-base">Ler em voz alta</p>
-      </div>
-
-      {/* Stories list */}
-      <main className="flex-1 px-5 pb-10 space-y-4 max-w-md mx-auto w-full relative z-10">
-        {filtered.map((story) => (
-          <div
-            key={story.id}
-            className="glass-card rounded-lg overflow-hidden shadow-card"
-          >
-            <div className="flex" style={{ minHeight: 140 }}>
-              {/* Cover art */}
-              <div
-                className="flex-shrink-0 flex flex-col items-center justify-center relative"
-                style={{
-                  width: 120,
-                  background: `linear-gradient(160deg, ${story.bg[0]}, ${story.bg[1]})`,
-                }}
+      {/* Stories grid */}
+      <main className="flex-1 px-5 pb-10 max-w-md mx-auto w-full relative z-10">
+        <div className="grid grid-cols-2 gap-3 mt-4">
+          {STORIES.map((s) => {
+            const meta = STORY_META[s.nightNumber]
+            return (
+              <button
+                key={s.nightNumber}
+                onClick={() => setSelectedStory(s.nightNumber)}
+                className="text-left rounded-card overflow-hidden hover:scale-[1.02] transition-all active:scale-[0.97]"
               >
-                <span style={{ fontSize: 52 }}>{story.emoji}</span>
-                <div
-                  className="absolute inset-0 opacity-10"
-                  style={{
-                    backgroundImage: 'radial-gradient(circle at 30% 30%, white 1px, transparent 1px)',
-                    backgroundSize: '12px 12px',
-                  }}
-                />
-              </div>
-
-              {/* Content */}
-              <div className="flex-1 p-4 flex flex-col justify-between min-w-0">
-                <div>
-                  <span className={`inline-block text-xs font-extrabold px-2 py-0.5 rounded-pill mb-2 ${
-                    story.free
-                      ? 'bg-accent-teal/[0.18] text-accent-teal'
-                      : 'bg-accent-gold/[0.15] text-accent-gold'
-                  }`}>
-                    {story.free ? 'GRÁTIS' : 'PREMIUM'}
-                  </span>
-
-                  <p className="font-body font-bold text-text text-sm leading-snug mb-1">
-                    {story.title}
-                  </p>
-
-                  <p className="text-text-muted text-xs leading-relaxed line-clamp-2">
-                    {story.desc}
-                  </p>
-                </div>
-
-                <div className="flex items-center justify-between mt-3">
-                  <div>
-                    <p className="text-text-secondary text-xs font-bold">Ler em voz alta</p>
-                    <p className="text-text-muted text-xs">📖 {story.duration}</p>
+                <div className="relative" style={{ aspectRatio: '3/4' }}>
+                  {/* Background */}
+                  <div className="absolute inset-0" style={{
+                    background: `linear-gradient(160deg, ${meta.gradient[1]}, ${meta.gradient[0]})`,
+                  }}>
+                    {/* Decorative stars */}
+                    <div className="absolute top-3 left-3 w-1 h-1 rounded-full bg-white/40" />
+                    <div className="absolute top-5 right-4 w-1.5 h-1.5 rounded-full bg-accent-gold/50" />
+                    <div className="absolute top-8 left-[55%] w-1 h-1 rounded-full bg-white/30" />
+                    <div className="absolute top-12 left-5 w-1 h-1 rounded-full bg-white/20" />
+                    <div className="absolute top-6 left-[30%] w-0.5 h-0.5 rounded-full bg-accent-gold/40" />
                   </div>
 
-                  <button
-                    onClick={() => setPlaying(playing === story.id ? null : story.id)}
-                    className="w-10 h-10 rounded-full flex items-center justify-center transition-all active:scale-90 shadow-glow"
-                    style={{ background: 'linear-gradient(135deg, #7B4FC0, #9B6DD4)' }}
-                  >
-                    {playing === story.id ? (
-                      <span className="text-white text-sm font-bold">⏸</span>
-                    ) : (
-                      <span className="text-white text-sm" style={{ marginLeft: 2 }}>▶</span>
-                    )}
-                  </button>
-                </div>
-              </div>
-            </div>
+                  {/* Emoji illustration */}
+                  <div className="absolute inset-x-0 top-0 bottom-16 flex items-center justify-center">
+                    <span className="text-6xl" style={{ filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.5))' }}>
+                      {meta.emoji}
+                    </span>
+                  </div>
 
-            {/* Playing bar */}
-            {playing === story.id && (
-              <div
-                className="px-4 py-2.5 flex items-center gap-3"
-                style={{ background: `linear-gradient(135deg, ${story.bg[0]}25, ${story.bg[1]}25)` }}
-              >
-                <div className="flex gap-0.5 items-end h-4">
-                  {[3, 5, 4, 6, 3, 5, 4].map((h, i) => (
-                    <div
-                      key={i}
-                      className="w-0.5 rounded-full animate-pulse"
-                      style={{
-                        height: h * 3,
-                        backgroundColor: story.bg[0],
-                        animationDelay: `${i * 0.12}s`,
-                      }}
-                    />
-                  ))}
+                  {/* Night number badge */}
+                  <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-accent-gold/90 flex items-center justify-center">
+                    <span className="text-xs font-bold text-deep">{s.nightNumber}</span>
+                  </div>
+
+                  {/* Title overlay */}
+                  <div className="absolute bottom-0 inset-x-0 p-3" style={{
+                    background: `linear-gradient(to top, ${meta.gradient[0]}ee, ${meta.gradient[0]}aa, transparent)`,
+                  }}>
+                    <p className="font-body font-extrabold text-text text-xs leading-snug">{s.title}</p>
+                    <p className="text-text-muted text-xs mt-0.5">{s.destination}</p>
+                  </div>
                 </div>
-                <p className="text-xs font-bold" style={{ color: story.bg[1] }}>
-                  Reproduzindo...
-                </p>
-              </div>
-            )}
-          </div>
-        ))}
+              </button>
+            )
+          })}
+        </div>
       </main>
-
-      {/* Bottom nav */}
-      <nav className="sticky bottom-0 glass-card border-t border-border px-8 py-3 flex items-center justify-around z-20">
-        <Link href="/dashboard" className="flex flex-col items-center gap-1">
-          <span className="text-xl">🏠</span>
-          <span className="text-text-muted text-xs">Início</span>
-        </Link>
-        <button className="flex flex-col items-center gap-1">
-          <span className="text-xl">📖</span>
-          <span className="text-lavender text-xs font-bold">Biblioteca</span>
-        </button>
-        <Link href="/emocoes" className="flex flex-col items-center gap-1">
-          <span className="text-xl">👤</span>
-          <span className="text-text-muted text-xs">Perfil</span>
-        </Link>
-      </nav>
     </div>
   )
 }
