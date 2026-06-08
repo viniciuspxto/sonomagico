@@ -138,7 +138,7 @@ export default async function DashboardPage() {
       <header className="px-5 pt-12 pb-4 flex items-center justify-between relative z-10">
         <div>
           <p className="text-text-muted text-xs uppercase tracking-widest font-extrabold">{getGreeting()}</p>
-          <h1 className="font-heading text-2xl font-bold text-text">{firstName} 👋</h1>
+          <h1 className="font-heading text-2xl font-bold text-text">{firstName}</h1>
         </div>
         <div className="flex items-center gap-2">
           <LogoutButton />

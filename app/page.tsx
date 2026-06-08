@@ -253,7 +253,7 @@ export default function Home() {
                 <ArrowRightIcon className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />
               </Link>
               <Link
-                href="/login"
+                href="/login?mode=login"
                 className="inline-flex items-center justify-center py-3.5 px-8 rounded-pill text-light-lavender font-body font-bold border border-lavender/30 hover:border-lavender/60 hover:bg-white/[0.04] transition-all duration-200 text-sm cursor-pointer"
               >
                 Ja tenho conta
