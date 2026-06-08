@@ -210,11 +210,7 @@ export function BreathingSession() {
                   <div className="w-12 h-12 rounded-md flex items-center justify-center text-2xl bg-violet/30">
                     {t.emoji}
                   </div>
-                  <span className={`text-xs font-extrabold px-2 py-0.5 rounded-pill ${
-                    t.free ? 'bg-accent-teal/[0.18] text-accent-teal' : 'bg-accent-gold/[0.15] text-accent-gold'
-                  }`}>
-                    {t.free ? 'GRÁTIS' : 'PREMIUM'}
-                  </span>
+                  <span />
                 </div>
                 <div>
                   <p className="font-body font-bold text-text text-sm">{t.name}</p>
