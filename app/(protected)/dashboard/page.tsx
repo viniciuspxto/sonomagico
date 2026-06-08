@@ -1,17 +1,13 @@
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { LogoutButton } from '@/components/features/logout-button'
 import { TrailProgress } from '@/components/features/trail-progress'
 import { calculateStreak, completedToday } from '@/lib/streak'
 import type { RitualNightStatus } from '@/types'
 
 const DAYS = ['D','S','T','Q','Q','S','S']
-
-const ACTIVITIES = [
-  { href: '/respiracao',   emoji: '🌬️', label: 'Respiracao',    badge: 'GRATIS',   free: true },
-  { href: '/historias',    emoji: '📖',  label: 'Historias',     badge: 'GRATIS',   free: true },
-]
 
 const EMOTION_EMOJIS: Record<string, string> = {
   'muito-feliz': '😄', 'feliz': '🙂', 'tranquilo': '😌',
@@ -107,7 +103,7 @@ export default async function DashboardPage() {
       return {
         label: `Noite ${currentNight - 1} concluida!`,
         sublabel: 'Volte amanha para continuar',
-        emoji: '✅',
+        emoji: '🌙',
         href: '#',
         style: 'teal' as const,
       }
@@ -271,7 +267,22 @@ export default async function DashboardPage() {
                       {cta.sublabel}
                     </p>
                   </div>
-                  <div className="text-5xl flex-shrink-0 ml-3">{cta.emoji}</div>
+                  <div className="flex-shrink-0 ml-3 relative" style={{ width: 52, height: 52 }}>
+                    <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+                      {/* Moon */}
+                      <circle cx="26" cy="26" r="16" fill="#F5E8A8" opacity="0.9" />
+                      <circle cx="32" cy="20" r="16" fill={cta.style === 'teal' ? '#0d2a26' : cta.style === 'gold' ? '#F5B942' : '#3D1A78'} />
+                      <circle cx="26" cy="26" r="16" fill="#F5E8A8" opacity="0.85" />
+                      {/* Stars */}
+                      <circle cx="8" cy="10" r="1.8" fill="#F5E8A8" opacity="0.9" />
+                      <circle cx="44" cy="8" r="1.2" fill="#F5E8A8" opacity="0.7" />
+                      <circle cx="46" cy="38" r="1.5" fill="#F5E8A8" opacity="0.8" />
+                      <circle cx="6" cy="40" r="1" fill="#F5E8A8" opacity="0.6" />
+                      <circle cx="14" cy="4" r="1" fill="#fff" opacity="0.5" />
+                      <circle cx="40" cy="48" r="1.3" fill="#fff" opacity="0.6" />
+                      <circle cx="48" cy="22" r="0.8" fill="#fff" opacity="0.5" />
+                    </svg>
+                  </div>
                 </div>
 
                 {/* Trail progress indicator */}
@@ -287,22 +298,68 @@ export default async function DashboardPage() {
               </div>
             </Link>
 
-            {/* Respiracao e Historias */}
-            {ACTIVITIES.map((a) => (
-              <Link key={a.href} href={a.href} className="block">
-                <div className="glass-card rounded-card p-4 flex items-center gap-4 hover:border-lavender/30 transition-all active:scale-[0.97]">
-                  <div className="w-10 h-10 rounded-md flex items-center justify-center text-xl bg-violet/30 flex-shrink-0">
-                    {a.emoji}
+            {/* Respiracao e Historias — side by side */}
+            <div className="grid grid-cols-2 gap-3">
+              {/* Card Respiracao */}
+              <Link href="/respiracao" className="block">
+                <div className="relative rounded-card overflow-hidden hover:scale-[1.02] transition-all active:scale-[0.97]" style={{ aspectRatio: '1/1.15' }}>
+                  {/* Background illustration */}
+                  <div className="absolute inset-0" style={{
+                    background: 'radial-gradient(ellipse at 50% 30%, #2D1A78 0%, #1A0A3C 80%)',
+                  }}>
+                    {/* Moon */}
+                    <div className="absolute top-3 right-4 w-8 h-8 rounded-full" style={{
+                      background: 'radial-gradient(circle at 35% 35%, #F5E8A8, #E8D898)',
+                      boxShadow: '0 0 20px rgba(245,232,168,0.3)',
+                    }} />
+                    {/* Stars */}
+                    <div className="absolute top-5 left-4 w-1.5 h-1.5 rounded-full bg-white/60" />
+                    <div className="absolute top-8 left-10 w-1 h-1 rounded-full bg-white/40" />
+                    <div className="absolute top-4 left-[45%] w-1 h-1 rounded-full bg-white/50" />
+                    <div className="absolute top-10 right-10 w-1 h-1 rounded-full bg-lavender/40" />
+                    {/* Soft clouds/mist at bottom */}
+                    <div className="absolute bottom-0 inset-x-0 h-1/3" style={{
+                      background: 'linear-gradient(to top, rgba(107,63,160,0.25), transparent)',
+                    }} />
                   </div>
-                  <p className="font-body font-bold text-text text-sm flex-1">{a.label}</p>
-                  <span className={`text-xs font-extrabold px-2 py-0.5 rounded-pill ${
-                    a.free ? 'bg-accent-teal/[0.18] text-accent-teal' : 'bg-accent-gold/[0.15] text-accent-gold'
-                  }`}>
-                    {a.badge}
-                  </span>
+                  {/* Magicaco image */}
+                  <div className="absolute inset-x-0 bottom-10 flex justify-center">
+                    <Image
+                      src="/images/magicaco-breathing.png"
+                      alt="Respiracao"
+                      width={100}
+                      height={100}
+                      style={{ objectFit: 'contain', filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.4))' }}
+                    />
+                  </div>
+                  {/* Label */}
+                  <div className="absolute bottom-0 inset-x-0 p-3 text-center" style={{
+                    background: 'linear-gradient(to top, rgba(26,10,60,0.95), rgba(26,10,60,0.6), transparent)',
+                  }}>
+                    <p className="font-body font-extrabold text-text text-sm">Respiracao</p>
+                  </div>
                 </div>
               </Link>
-            ))}
+
+              {/* Card Historias */}
+              <Link href="/historias" className="block">
+                <div className="relative rounded-card overflow-hidden hover:scale-[1.02] transition-all active:scale-[0.97]" style={{ aspectRatio: '1/1.15' }}>
+                  {/* Background image — fills entire card */}
+                  <Image
+                    src="/images/magicaco-reading.png"
+                    alt="Historias"
+                    fill
+                    className="object-cover object-top"
+                  />
+                  {/* Label */}
+                  <div className="absolute bottom-0 inset-x-0 p-3 text-center" style={{
+                    background: 'linear-gradient(to top, rgba(13,27,42,0.95), rgba(13,27,42,0.6), transparent)',
+                  }}>
+                    <p className="font-body font-extrabold text-text text-sm">Historias</p>
+                  </div>
+                </div>
+              </Link>
+            </div>
           </div>
         </div>
 

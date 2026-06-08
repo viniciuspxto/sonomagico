@@ -64,6 +64,22 @@ export function StepStory({ nightNumber, onComplete }: Props) {
               </p>
             ))}
           </div>
+
+          {/* Ending / guided relaxation */}
+          {story.ending && (
+            <div className="mt-6 pt-5 border-t border-border/30 text-center">
+              {story.ending.split('\n').map((line, idx) => (
+                <p
+                  key={idx}
+                  className="text-lavender italic"
+                  style={{ fontSize: 16, lineHeight: 1.7 }}
+                >
+                  {line}
+                </p>
+              ))}
+              <p className="mt-4 text-text-muted text-sm tracking-widest">Boa noite</p>
+            </div>
+          )}
         </div>
       )}
 
